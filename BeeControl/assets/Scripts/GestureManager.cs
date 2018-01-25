@@ -17,7 +17,32 @@ public class GestureManager : MonoBehaviour
 			// We only enter drag mode during gameplay and when the player hold the left mouse button.
 			if (GameplayManager.Instance.CanPlay() && Input.GetMouseButtonDown(0))
 			{
-				// *** Add your source code here ***
+                //Create 3D ray pointing into the world at the mouse position
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                //Check if our ray is hitting anything in the scene
+                RaycastHit hitInfo;
+                if(Physics.Raycast(ray, out hitInfo, 1000f))
+                {
+                    //Check if the ray hits a bee. If so, we have 'selected the bee
+                    if(hitInfo.transform.CompareTag("Bee"))
+                    {
+                        //Make sure the bee is not stunned
+                        BeeController bee = hitInfo.transform.GetComponent<BeeController>();
+                        if (!bee.IsStunned())
+                        {
+                            //Append waypoints to path for this bee,
+                            //starting at current position
+                            currentPath = hitInfo.transform.GetComponentInChildren<FlightPath>();
+                            currentPath.Clear();
+                            currentPath.Append(hitInfo.transform.position);
+
+                            //Enter dragmode, keep appending waypoints to bee's path
+                            drag = true;
+                           
+                        }
+                    }
+                }
 			}
 		}
 		else

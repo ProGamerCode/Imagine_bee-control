@@ -60,7 +60,30 @@ public class BeeController : MonoBehaviour
 		}
 		else
 		{
-			// *** Add your source code here ***
+            //Check if the bee has arrived at waypoint
+            Vector3 waypoint;
+
+            if(flightPath.GetWaypoint(out waypoint))
+            {
+                //If we have a waypoint, update current velocity to move towards it
+                velocity = Vector3.Normalize(waypoint - transform.position) * moveSpeed;
+            }
+            //Update the bee's position (i.e. displacement = velocity*time)
+            transform.position += velocity * Time.deltaTime;
+
+            //Update the bee's rotation 
+            Quaternion newRotation = Quaternion.FromToRotation(Vector3.up, velocity);
+            transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime);
+
+            //Finally, we make sure the bee dosen't wander off screen
+            KeepBeeWithinViewport();
+
+            //Check if the bee has reached the waypoint 
+            if(flightPath.HasArrived())
+            {
+                //Deactivate the bee
+                Terminate();
+            }
 		}
 	}
 

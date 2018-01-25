@@ -51,15 +51,68 @@ public class Beehive : MonoBehaviour
 
 	void Start()
 	{
-		// *** Add your source code here ***
-	}
+        // Allocate a 2D grid of honeycombs
+        honeycombGrid = new GameObject[numRows, numColumns];
 
-	void Update()
+        //Compare the x and y spacing for our grid
+        float spacingX = honeycombSize;
+        float spacingY = honeycombSize * 0.75f;
+
+        //Loop through all the rows in our grid
+        for (int row = 0; row < numRows; ++row)
+        {
+            //Offset even rows slightly to the right lamda checks if row is even if True we offset it else remain 0f
+            float rowOffset = (row % 2 == 0) ? 0.5f : 0f;
+
+            //Loop through each column in our row
+            for (int column =0; column < numColumns; ++column)
+            {
+                //Instantiate a new honeycomb at this position
+                /*apply a negitave offset for X and Y to shift rows and columns by half*/
+                float posX = ((numColumns * -0.5f) + column + rowOffset) * spacingX;
+                float posY =((numRows * -0.5f) + row) * spacingY;
+                Vector3 position = new Vector3(posX, posY, 2f);
+
+                GameObject newObject = GameObject.Instantiate(honeycomb, position, Quaternion.identity) as GameObject;
+
+                newObject.transform.SetParent(transform);
+
+                //Check if this cell should be revealed at the start of the game 
+                float distance = Mathf.Sqrt((posX * posY) + (posY * posX));
+                if (distance < startRadius * honeycombSize)
+                {
+                    newObject.SetActive(true);
+                    numHoneycombsActive++;
+                }
+                else
+                {
+                    newObject.SetActive(false);
+                }
+                //Assign new honeycomb to grid at coordinate (row, column)
+                honeycombGrid[row, column] = newObject;
+
+            }
+        }
+        //Open some honeycombs by default
+        Open(settings[settingIndex].openCount);
+    }
+
+    void Update()
 	{
 		// Check if we can start playing.
 		if (GameplayManager.Instance.CanPlay())
 		{
-			// *** Add your source code here ***
+			//Check if we have any honeycombs open
+            if (openHoneycombs.Count <=0)
+            {
+                //If all honeycombs are closed, increase our setting index
+                //clamp index range with math f
+                settingIndex = Mathf.Min(settingIndex + 1, settings.Length - 1);
+
+                //Expand our hive and re-open some more honeycombs
+                ExpandHive(settings[settingIndex].hiveGrowSize);
+                Open(settings[settingIndex].openCount);
+            }
 		}
 	}
 
