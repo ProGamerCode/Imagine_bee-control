@@ -44,7 +44,7 @@ public class FlightPath : MonoBehaviour
 			lineRenderer.enabled = true;
 
 			// Set the vertices for the remaining path.
-			lineRenderer.SetVertexCount(numWaypointsToRender);
+			lineRenderer.positionCount=numWaypointsToRender;
 			for (int i = 0; i < numWaypointsToRender; ++i)
 			{
 				lineRenderer.SetPosition(i, Waypoints[i + currentIndex]);
@@ -65,7 +65,7 @@ public class FlightPath : MonoBehaviour
 		Waypoints.Clear();
 
 		// Disable the line renderer.
-		lineRenderer.SetVertexCount(0);
+		lineRenderer.positionCount=0;
 		lineRenderer.enabled = false;
 
 		// Reset the waypoint index to 0.
@@ -117,8 +117,8 @@ public class FlightPath : MonoBehaviour
 			destinationHoneycomb = honeycomb;
 
 			// Update the line renderer colors to connected.
-			lineRenderer.SetColors(connectedColor, connectedColor);
-		}
+			lineRenderer.startColor = connectedColor;
+        }
 	}
 
 	/// <summary>
@@ -127,7 +127,7 @@ public class FlightPath : MonoBehaviour
 	public void Disconnect()
 	{
 		destinationHoneycomb = null;
-		lineRenderer.SetColors(unconnectedColor, unconnectedColor);
+		lineRenderer.startColor= unconnectedColor;
 	}
 
 	/// <summary>

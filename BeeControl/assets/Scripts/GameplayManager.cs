@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// The gameplay manager is responsible for controlling the overall flow of the game. The
@@ -55,7 +56,8 @@ public class GameplayManager : MonoBehaviour
 	/// </summary>
 	void ReloadScene()
 	{
-		Application.LoadLevel(Application.loadedLevel);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().ToString());
+		
 	}
 
 	/// <summary>
